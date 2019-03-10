@@ -1,17 +1,20 @@
-#ifndef DATA_DEFAULT_MODEL
+#ifndef D_DEFAULT_MODEL
 #define DATA_DEFAULT_MODEL
 
 #include "Data.hpp"
+#include "Tuple.hpp"
 
 #include <list>
 #include <vector>
+#include <string>
 
-
-
-class DataDefaulModel {
-   std::list<Data> data_container;
-   std::list< std::vector<Data*> > data_map;
-   void addData(Data data);
+template< class D>
+class DataDefaultModel {
+   std::list<Data<D>> data_container;
+   std::list<Tuple> data_map;
+public:
+   void insert(Data<D>& data);
+   typename std::list<Tuple>::iterator search(uint32_t id);
 };
 
 #endif
