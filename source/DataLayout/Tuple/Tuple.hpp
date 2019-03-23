@@ -7,10 +7,10 @@
 
 class Tuple{
 protected:
-   static uint32_t get_new_id(void);
    uint32_t id;
    static uint32_t last_id;
 public:
+   static uint32_t get_new_id(void);
    Tuple();
    Tuple(uint32_t);
    uint32_t get_id()const;

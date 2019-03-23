@@ -1,41 +1,82 @@
+#SOURCES := $(shell find . -name "*.cpp")
 DEBUG=yes
-CC=g++
 
-SRC_DIR=source
-HEADER_DIR=header
-BIN_DIR=bin
+#---------------------------------------
+#Editable part
+SOURCE_DIR=source
 
-SRC_EXT=cpp
-HEADER_EXT=hpp
+TARGET_NAME=program
+TARGET_DIR=bin
 
-EXEC=prog
+BUILD_DIR=build
+RESSOURCE_DIR=resources
 
-LDFLAGS= -I$(HEADER_DIR)
-CFLAGS= -MMD -ansi --std=gnu++11 -pedantic -Wall -Wextra #-Wold-style-cast -Woverloaded-virtual -Wfloat-equal -Wwrite-strings -Wpointer-arith -Wcast-qual -Wcast-align -Wconversion -Wshadow -Wredundant-decls -Wdouble-promotion -Winit-self -Wswitch-default -Wswitch-enum -Wundef -Wlogical-op -Winline
+LIB_FLAG= -pthread
+
+
+CFLAGS= -MMD -ansi --std=gnu++11 -pedantic -Wall -Wextra
+SYSTEM_CFLAGS= $(GTEST_DIR)/include
+
+
 ifeq ($(DEBUG),yes)
 CFLAGS+= -ggdb
 endif
 
-DEPENDENCIES=$(subst $(SRC_DIR),$(BIN_DIR),$(patsubst %.$(SRC_EXT),%.d,$(wildcard $(SRC_DIR)/*.$(SRC_EXT))))
+CC=g++
+SOURCE_EXT=cpp
+HEADER_EXT=hpp
+TARGET=$(TARGET_DIR)/$(TARGET_NAME)
+
+sources := $(shell find $(SOURCE_DIR) -name "*.$(SOURCE_EXT)")
+objects := $(sources:$(SOURCE_DIR)/%.$(SOURCE_EXT)=$(BUILD_DIR)/obj/%.o)
+headers := $(shell find $(SOURCE_DIR) -name "*.$(HEADER_EXT)")
+LDFLAGS := $(sort $(addprefix -I,$(dir $(headers))))
+
+all: library $(TARGET) resources
+#---------------------------------------
+#Add of google test compile variable
+GTEST_DIR=./lib/GoogleTestFramework/googletest
+SYSTEM_CFLAGS = $(GTEST_DIR)/include
+CFLAGS+= $(BUILD_DIR)/lib/libgtest.a
 
 
-all:$(EXEC)
-ifeq ($(DEBUG),yes)
-	@echo "Génération en mode debug"
-else
-	@echo "Génération en mode release"
-endif
+#Add the compile rules for the Google Test Framework
+googletest:directories $(BUILD_DIR)/lib/libgtest.a
 
-$(EXEC): $(subst $(SRC_DIR),$(BIN_DIR),$(patsubst %.$(SRC_EXT),%.o,$(wildcard $(SRC_DIR)/*.$(SRC_EXT))))
-	@$(CC) -o $(EXEC) $^ $(CFLAGS) $(LDFLAGS)
+$(BUILD_DIR)/lib/libgtest.a:$(BUILD_DIR)/lib/gtest-all.o
+	@ar -rv $(BUILD_DIR)/lib/libgtest.a $(BUILD_DIR)/lib/gtest-all.o
+	@echo "Google test library compiled"
 
-$(BIN_DIR)/%.o: $(SRC_DIR)/%.$(SRC_EXT)
-	@$(CC) -c $< -o $@ $(CFLAGS) $(LDFLAGS)
+$(BUILD_DIR)/lib/gtest-all.o : $(GTEST_DIR)/src/gtest-all.cc
+	@g++ -std=c++11 -isystem $(GTEST_DIR)/include -I${GTEST_DIR} -pthread -c $(GTEST_DIR)/src/gtest-all.cc -o $(BUILD_DIR)/lib/gtest-all.o
 
--include $(DEPENDENCIES)
+
+#---------------------------------------
+library: googletest
+
+resources: directories
+	@cp $(RESSOURCE_DIR)/* $(TARGET_DIR)/
+
+-include $(OBJECTS:.$(OBJEXT)=.d)
+
+directories:
+	@mkdir -p $(RESSOURCE_DIR)
+	@mkdir -p $(TARGET_DIR)
+	@mkdir -p $(BUILD_DIR)/obj $(BUILD_DIR)/lib
+
+$(TARGET):$(objects)
+	@$(CC) -o $(TARGET) $^ $(CFLAGS) -isystem $(SYSTEM_CFLAGS) $(LIB_FLAG) $(LDFLAGS) $(LIB)
+
+$(BUILD_DIR)/obj/%.o:$(SOURCE_DIR)/%.$(SOURCE_EXT)
+	@mkdir -p $(@D)
+	@$(CC) -isystem $(SYSTEM_CFLAGS) $(LDFLAGS) $(CFLAGS) $(LIB_FLAG) -c -o $@ $<
 
 clean:
-		@rm -rf $(BIN_DIR)/*.o
-clean_exec:
-		@rm -rf $(EXEC)
-proper:clean clean_exec
+	@rm -rf $(BUILD_DIR)/obj
+
+#Full Clean, Objects and Binaries
+cleaner: clean
+	@rm -rf $(TARGET_DIR)
+
+
+.PHONY: all clean cleaner resources

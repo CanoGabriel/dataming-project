@@ -1,4 +1,7 @@
 .*
-*.csv
-TODO
-prog
+/build
+/lib
+/resources
+/bin
+/*.cpp
+/*.hpp

@@ -2,9 +2,16 @@
 #include <iostream>
 #include <iomanip>
 
-using namespace std;
+#include "Test.hpp"
+
 int main(int argc, char ** argv){
-   long double d = (long double)3;
-   cout  << std::setprecision(10) << std::fixed << "Hello World  " << d << endl;
-   return EXIT_SUCCESS;
+   bool check = true;
+   check &= Test::TestFileReader::test_class();;
+   if(check) std::cerr << "Test class FileReader ok\n\n";
+   else std::cerr << "Test class FileReader ko\n\n";
+   check &= Test::TestItemsetModel::test_class();;
+   if(check) std::cerr << "Test class ItemsetModel ok\n\n";
+   else std::cerr << "Test class ItemsetModel ko\n\n";
+   if(check) return EXIT_SUCCESS;
+   else return EXIT_FAILURE;
 }
