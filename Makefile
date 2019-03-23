@@ -12,6 +12,7 @@ BUILD_DIR=build
 RESSOURCE_DIR=resources
 
 LIB_FLAG= -pthread
+STATIC_LIB=
 
 
 CFLAGS= -MMD -ansi --std=gnu++11 -pedantic -Wall -Wextra
@@ -37,7 +38,7 @@ all: library $(TARGET) resources
 #Add of google test compile variable
 GTEST_DIR=./lib/GoogleTestFramework/googletest
 SYSTEM_CFLAGS = $(GTEST_DIR)/include
-CFLAGS+= $(BUILD_DIR)/lib/libgtest.a
+STATIC_LIB += $(BUILD_DIR)/lib/libgtest.a
 
 
 #Add the compile rules for the Google Test Framework
@@ -65,7 +66,7 @@ directories:
 	@mkdir -p $(BUILD_DIR)/obj $(BUILD_DIR)/lib
 
 $(TARGET):$(objects)
-	@$(CC) -o $(TARGET) $^ $(CFLAGS) -isystem $(SYSTEM_CFLAGS) $(LIB_FLAG) $(LDFLAGS) $(LIB)
+	@$(CC) -o $(TARGET) $^ $(CFLAGS) -isystem $(SYSTEM_CFLAGS) $(LIB_FLAG) $(STATIC_LIB) $(LDFLAGS) $(LIB)
 
 $(BUILD_DIR)/obj/%.o:$(SOURCE_DIR)/%.$(SOURCE_EXT)
 	@mkdir -p $(@D)
@@ -78,5 +79,7 @@ clean:
 cleaner: clean
 	@rm -rf $(TARGET_DIR)
 
+exec:
+	./$(TARGET)
 
 .PHONY: all clean cleaner resources
