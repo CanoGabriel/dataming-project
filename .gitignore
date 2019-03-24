@@ -2,5 +2,6 @@
 /build
 /resources
 /bin
+/docs
 /*.cpp
 /*.hpp

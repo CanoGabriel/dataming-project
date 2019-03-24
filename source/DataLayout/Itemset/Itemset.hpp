@@ -5,10 +5,15 @@
 #include "Data.hpp"
 
 #include <list>
+#include <utility>
+#include <vector>
+#include <set>
 #include <string>
 #include <cstdint>
 
 class Itemset;
+typedef std::pair<Itemset,Itemset> Rule;
+
 class Itemset : public Tuple {
    std::list<Data<std::string>* > values;
    uint32_t support;
@@ -27,6 +32,7 @@ public:
    std::list<Data<std::string>* >& get_values(void);
 	const std::list<Data<std::string>* >& get_values(void)const;
    uint32_t get_size()const;
+	bool pop_value(const Data<std::string>*& data, Itemset& poped_value, Itemset& remaining_value)const;
    uint32_t get_support()const;
    void set_support(uint32_t _support);
    void clear();
@@ -36,6 +42,7 @@ public:
 	std::list<Data<std::string>* >::const_iterator end()const;
 
    static bool  merge(const Itemset& i, const Itemset& j, Itemset& res);
+   static void extract_rules(const Itemset& itemset, std::vector<Rule>& res);
    bool in(Itemset& other)const;
 
    friend std::ostream &operator<<(std::ostream &os, Itemset const &itemset);
