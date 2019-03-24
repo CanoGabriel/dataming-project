@@ -1,8 +1,8 @@
 #include "Itemset.hpp"
 
-Itemset::Itemset():Tuple(){}
+Itemset::Itemset():Tuple(),support(0){}
 
-Itemset::Itemset(uint32_t _id):Tuple(_id),support_is_set(false),support(0){}
+Itemset::Itemset(uint32_t _id):Tuple(_id),support(0){}
 
 void Itemset::insert(Data<std::string> * value){
 	if(values.empty()){
@@ -30,6 +30,9 @@ void Itemset::insert(Data<std::string> * value){
 std::list<Data<std::string>* >& Itemset::get_values(void){
 	return values;
 }
+const std::list<Data<std::string>* >& Itemset::get_values(void)const{
+	return values;
+}
 
 uint32_t Itemset::get_size()const{
 	return values.size();
@@ -44,7 +47,7 @@ std::ostream &operator<<(std::ostream &os, Itemset const &itemset){
 			os << (*it)->get_value() << ", ";
 		}
 	}
-	os << "("<< itemset.get_support() <<")" << std::endl;
+	os << "("<< itemset.get_support() <<")";
 	//os << std::endl;
 	return os;
 }
@@ -53,7 +56,6 @@ std::ostream &operator<<(std::ostream &os, Itemset const &itemset){
 uint32_t Itemset::get_support()const{return support;}
 void Itemset::set_support(uint32_t _support){
 	support = _support;
-	support_is_set = true;
 }
 
 bool Itemset::CompareDataPt::operator()(Data<std::string>* lhs, Data<std::string>* rhs){
@@ -70,19 +72,23 @@ void Itemset::clear(){
 	values.clear();
 }
 
-bool Itemset::merge(Itemset& i, Itemset& j, Itemset& res){
+bool Itemset::merge(const Itemset& i, const Itemset& j, Itemset& res){
 	//Check if the k-1 first element are the same, if yes merge else return false
+	//std::cout << "Merge : " << i << " " << j << " = "  << std::endl;
 	if( i.get_size() != j.get_size() ) return false;
 	res.clear();
 	uint32_t n = 0;
-	std::list<Data<std::string>*>& i_values = i.get_values();
-	std::list<Data<std::string>*>& j_values = j.get_values();
-	std::list<Data<std::string>*>::iterator it = i_values.begin();
-	std::list<Data<std::string>*>::iterator jt = j_values.begin();
+	const std::list<Data<std::string>*>& i_values = i.get_values();
+	const std::list<Data<std::string>*>& j_values = j.get_values();
+	std::list<Data<std::string>*>::const_iterator it = i_values.begin();
+	std::list<Data<std::string>*>::const_iterator jt = j_values.begin();
 	bool check = true;
 	for(;it != i_values.end() && jt != j_values.end();it++,jt++,n++){
-		if(n != i.get_size() - 1){
+		if(n < i.get_size() - 1){
 			check &= Data<std::string>::compare_value(**it,**jt) == 0;
+		}
+		else{
+			check &= Data<std::string>::compare_value(**it,**jt) != 0;
 		}
 	}
 	if(!check) return false;
@@ -90,22 +96,23 @@ bool Itemset::merge(Itemset& i, Itemset& j, Itemset& res){
 	for(it = i_values.begin(); it != i_values.end() ; it++){
 		res.insert(*it);
 	}
+	//std::cout << res << std::endl;
 	return true;
 }
 
 bool Itemset::in(Itemset& other)const{
 	std::list<Data<std::string>*>& other_values = other.get_values();
 	auto it_other = other_values.begin();
-	std::cout << "Itemset::in\n";
+	//std::cout << "Itemset::in\n";
 	bool result = true;
 	int comp;
 	auto jt = other_values.begin();
 	for(auto it = values.begin() ; it != values.end() ; it++){
 		for( ; jt != other_values.end() ; jt++){
-			std::cout << (*it)->get_value() << " == ";
+			//std::cout << (*it)->get_value() << " == ";
 			comp = Data<std::string>::compare_value(**it,**jt);
-			std::cout << (*jt)->get_value() << " : ";
-			std::cout << comp << std::endl;
+			//std::cout << (*jt)->get_value() << " : ";
+			//std::cout << comp << std::endl;
 			if(comp < 0) return false;
 			else if(comp == 0) {
 				break;

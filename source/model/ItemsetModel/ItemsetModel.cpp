@@ -31,26 +31,71 @@ uint32_t ItemsetModel::get_size()const{
 	return data_map.size();
 }
 
-void ItemsetModel::generate_itemset(uint32_t k){
-	std::set<Itemset,Itemset::CompareItemset> s,t;
-	for(std::list<Itemset>::iterator itemset_ref = data_map.begin() ; itemset_ref != data_map.end() ; itemset_ref++){
-		for(std::list<Data<std::string>*>::iterator data_pt = itemset_ref->begin() ; data_pt != itemset_ref->end() ; data_pt++){
-			Itemset i;
-			i.insert(*data_pt);
-			s.insert(i);
+
+uint32_t ItemsetModel::get_minsup()const{
+	return minsup;
+}
+void ItemsetModel::set_minsup(uint32_t _minsup){
+	minsup=_minsup;
+}
+
+void ItemsetModel::clear(){
+	data_map.clear();
+	frequent_itemset.clear();
+}
+
+void ItemsetModel::calculate_frequent_itemset(){
+	//frequent_itemset.clear();
+	std::vector< std::set<Itemset,Itemset::CompareItemset> > sized_itemsets;
+	std::set<Itemset,Itemset::CompareItemset> temp;
+	uint32_t n = -1;
+	do{
+		n++;
+		temp.clear();
+		sized_itemsets.push_back(std::set<Itemset,Itemset::CompareItemset>());
+		if( 0 == n ){
+			for(std::list<Itemset>::iterator model_itemset = data_map.begin() ; model_itemset != data_map.end() ; model_itemset++){
+				for(std::list<Data<std::string>*>::iterator data_pt = model_itemset->begin() ; data_pt != model_itemset->end() ; data_pt++){
+					Itemset i;
+					i.insert(*data_pt);
+					temp.insert(i);
+				}
+			}
 		}
-		//std::cout << std::endl;
-	}
-	for(std::set<Itemset,Itemset::CompareItemset>::iterator i = s.begin() ; i != s.end() ; i++ ){
-		uint32_t n = 0;
-		Itemset temp = *i;
-		for(std::list<Itemset>::iterator j = data_map.begin() ; j != data_map.end() ; j++ ){
-			//Itemset it(*i), jt(*j);
-			if( i->in(*j)) n++;
+		else{
+			//merge k-1 itemset into k itemset
+			std::set<Itemset,Itemset::CompareItemset>& set_ref = sized_itemsets.at(n-1);
+			for(std::set<Itemset,Itemset::CompareItemset>::const_iterator i = set_ref.begin() ; i != set_ref.end() ; i++){
+				for(std::set<Itemset,Itemset::CompareItemset>::const_iterator j = set_ref.begin() ; j != set_ref.end() ; j++){
+					Itemset merged_itemset;
+					if(Itemset::merge(*i,*j,merged_itemset)){
+						temp.insert(merged_itemset);
+					}
+				}
+			}
 		}
-		temp.set_support(n);
-		t.insert(temp);
-		std::cout << temp << std::endl;
+
+		//Determine the support for each built itemset
+		for(std::set<Itemset,Itemset::CompareItemset>::iterator i = temp.begin() ; i != temp.end() ; i++ ){
+			uint32_t count = 0;
+			Itemset itemset = *i;
+			for(std::list<Itemset>::iterator j = data_map.begin() ; j != data_map.end() ; j++ ){
+				//Itemset it(*i), jt(*j);
+				if( i->in(*j)) count++;
+			}
+			//Prune itemset that the support is less than minsup
+			if(count >= minsup){
+				itemset.set_support(count);
+				sized_itemsets.at(n).insert(itemset);
+			}
+		}
+	}while(!sized_itemsets.at(n).empty());
+	temp.clear();
+	std::vector<Itemset> test;
+	for(auto set = sized_itemsets.begin() ; set != sized_itemsets.end() ; set++ ){
+		for(auto itemset = set->begin() ; itemset != set->end() ; itemset++ ){
+			frequent_itemset.push_back(Itemset(*itemset));
+		}
 	}
 }
 
@@ -62,11 +107,23 @@ std::list<Itemset>::const_iterator ItemsetModel::end()const{
 	return data_map.end();
 }
 
+std::ostream &operator<<(std::ostream &os, std::vector<Itemset> const &v) {
+	for(auto it = v.begin(); it != v.end();it++){
+		os << *it << std::endl;
+	}
+	return os;
+}
 std::ostream &operator<<(std::ostream &os, ItemsetModel const &m) {
-	os << "--Displaying itemset model--" << std::endl;
+
+	os << "----Displaying itemset model----" << std::endl;
 	for(std::list<Itemset>::const_iterator it = m.data_map.begin() ; it != m.data_map.end() ; it++){
 		os << *it << std::endl;
 	}
-	os << "----End of itemset model----";
+	os << "----End of itemset from data----" << std::endl;
+	os << "--Displaying frequent itemsets--" << std::endl;
+	for(auto it = m.frequent_itemset.begin(); it != m.frequent_itemset.end();it++){
+		os << *it << std::endl;
+	}
+	os << "----End of frequent itemsets----";
 	return os;
 }

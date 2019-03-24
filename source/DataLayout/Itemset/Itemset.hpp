@@ -11,7 +11,6 @@
 class Itemset;
 class Itemset : public Tuple {
    std::list<Data<std::string>* > values;
-	bool support_is_set;
    uint32_t support;
 public:
    Itemset();
@@ -26,6 +25,7 @@ public:
    */
    void insert(Data<std::string>* value);
    std::list<Data<std::string>* >& get_values(void);
+	const std::list<Data<std::string>* >& get_values(void)const;
    uint32_t get_size()const;
    uint32_t get_support()const;
    void set_support(uint32_t _support);
@@ -35,7 +35,7 @@ public:
 	std::list<Data<std::string>* >::iterator end();
 	std::list<Data<std::string>* >::const_iterator end()const;
 
-   static bool  merge(Itemset& i, Itemset& j, Itemset& res);
+   static bool  merge(const Itemset& i, const Itemset& j, Itemset& res);
    bool in(Itemset& other)const;
 
    friend std::ostream &operator<<(std::ostream &os, Itemset const &itemset);

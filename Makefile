@@ -80,6 +80,6 @@ cleaner: clean
 	@rm -rf $(TARGET_DIR)
 
 exec:
-	./$(TARGET)
+	gnome-terminal -x bash -c "./$(TARGET);read"
 
 .PHONY: all clean cleaner resources

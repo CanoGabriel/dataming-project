@@ -14,18 +14,24 @@
 
 class ItemsetModel {
    std::list<Itemset> data_map;
+	uint32_t minsup = 0;
+	std::vector<Itemset> frequent_itemset;
 	//std::map<uint32_t,std::list< Data<std::string>* >
 protected:
    std::list<Data<std::string>> data_container;
 public:
-	void generate_itemset(uint32_t k);
+	void calculate_frequent_itemset();
    void insert(Data<std::string>& data);
    std::list<Itemset>::iterator search(uint32_t id);
    std::list<Itemset>::iterator end();
    std::list<Itemset>::const_iterator end()const;
    uint32_t get_size()const;
+   uint32_t get_minsup()const;
+   void set_minsup(uint32_t _minsup);
+	void clear();
 
    friend std::ostream &operator<<(std::ostream &os, ItemsetModel const &m);
 };
 std::ostream &operator<<(std::ostream &os, ItemsetModel const &m);
+std::ostream &operator<<(std::ostream &os, std::vector<Itemset> const &v);
 #endif
