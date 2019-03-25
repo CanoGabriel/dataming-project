@@ -27,7 +27,7 @@ protected:
 	}
 };
 
-TEST_F(TestItemsetModel,simpleInsertTest){
+TEST_F(TestItemsetModel,test_simpleInsert){
 	ItemsetModel model;
 	model.insert(d1);
 	model.insert(d2);
@@ -38,7 +38,7 @@ TEST_F(TestItemsetModel,simpleInsertTest){
 	ASSERT_TRUE(model.get_size() == 2);
 }
 
-TEST_F(TestItemsetModel,insertAndSearchTest){
+TEST_F(TestItemsetModel,test_insertAndSearch){
 	ItemsetModel model;
 	model.insert(d1);
 	model.insert(d2);
@@ -54,7 +54,7 @@ TEST_F(TestItemsetModel,insertAndSearchTest){
 	ASSERT_TRUE(t2 != model.end() && t2->get_size() == 3);
 }
 
-TEST_F(TestItemsetModel,displayTest){
+TEST_F(TestItemsetModel,test_display){
 	ItemsetModel model;
 	model.insert(d1);
 	model.insert(d2);
@@ -62,14 +62,23 @@ TEST_F(TestItemsetModel,displayTest){
 	model.insert(d4);
 	model.insert(d5);
 	model.insert(d6);
+	model.set_minsup(1);
+	model.apriori();
 	std::cout << model << std::endl;
 }
 
-TEST_F(TestItemsetModel,calculateFrequentItemsetTest){
+TEST_F(TestItemsetModel,test_apriori){
 	ItemsetModel model;
 	FileReader fr("./bin/grocery.csv");
 	fr.read_itemset_file(",",model);
 	model.set_minsup(1);
-	model.calculate_frequent_itemset();
-	std::cout << model << std::endl;
+	model.apriori();
+}
+
+TEST_F(TestItemsetModel,test_apriori_100_input){
+	ItemsetModel model;
+	FileReader fr("./bin/sample_100.csv");
+	fr.read_itemset_file(",",model);
+	model.set_minsup(1);
+	model.apriori();
 }

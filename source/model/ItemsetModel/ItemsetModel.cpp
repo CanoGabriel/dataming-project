@@ -44,7 +44,7 @@ void ItemsetModel::clear(){
 	frequent_itemset.clear();
 }
 
-void ItemsetModel::calculate_frequent_itemset(){
+void ItemsetModel::apriori(){
 	//frequent_itemset.clear();
 	std::vector< std::set<Itemset,Itemset::CompareItemset> > sized_itemsets;
 	std::set<Itemset,Itemset::CompareItemset> temp;

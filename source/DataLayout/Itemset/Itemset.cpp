@@ -39,6 +39,7 @@ uint32_t Itemset::get_size()const{
 }
 std::ostream &operator<<(std::ostream &os, Itemset const &itemset){
 	uint32_t n = 0;
+	os << "{ ";
 	for(std::list<Data<std::string>* >::const_iterator it = itemset.values.begin() ; it != itemset.values.end(); it++,n++){
 		if( n == itemset.get_size()-1 ){
 			os << (*it)->get_value() << " ";
@@ -47,7 +48,7 @@ std::ostream &operator<<(std::ostream &os, Itemset const &itemset){
 			os << (*it)->get_value() << ", ";
 		}
 	}
-	os << "("<< itemset.get_support() <<")";
+	os << "} ("<< itemset.get_support() <<")";
 	//os << std::endl;
 	return os;
 }
@@ -75,8 +76,8 @@ void Itemset::clear(){
 bool Itemset::merge(const Itemset& i, const Itemset& j, Itemset& res){
 	//Check if the k-1 first element are the same, if yes merge else return false
 	//std::cout << "Merge : " << i << " " << j << " = "  << std::endl;
-	if( i.get_size() != j.get_size() ) return false;
 	res.clear();
+	if( i.get_size() != j.get_size() ) return false;
 	uint32_t n = 0;
 	const std::list<Data<std::string>*>& i_values = i.get_values();
 	const std::list<Data<std::string>*>& j_values = j.get_values();
@@ -159,7 +160,7 @@ void Itemset::extract_rules(const Itemset& itemset, std::vector<Rule>& res){
 
 }
 
-bool Itemset::pop_value(const Data<std::string>*& data, Itemset& poped_value, Itemset& remaining_value)const{
+bool Itemset::pop_by_value(const Data<std::string>* data, Itemset& poped_value, Itemset& remaining_value)const{
 	bool value_found = false;
 	for(std::list<Data<std::string>* >::const_iterator it = values.begin() ; it != values.end() ; it++){
 		if(Data<std::string>::compare(*data,**it) == 0){

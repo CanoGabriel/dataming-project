@@ -20,7 +20,7 @@ class ItemsetModel {
 protected:
    std::list<Data<std::string>> data_container;
 public:
-	void calculate_frequent_itemset();
+	void apriori();
    void insert(Data<std::string>& data);
    std::list<Itemset>::iterator search(uint32_t id);
    std::list<Itemset>::iterator end();

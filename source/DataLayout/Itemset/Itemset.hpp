@@ -18,6 +18,8 @@ class Itemset : public Tuple {
    std::list<Data<std::string>* > values;
    uint32_t support;
 public:
+	typedef std::list<Data<std::string>* >::iterator iterator;
+	typedef std::list<Data<std::string>* >::const_iterator const_iterator;
    Itemset();
    Itemset(uint32_t id);
    /*
@@ -32,7 +34,7 @@ public:
    std::list<Data<std::string>* >& get_values(void);
 	const std::list<Data<std::string>* >& get_values(void)const;
    uint32_t get_size()const;
-	bool pop_value(const Data<std::string>*& data, Itemset& poped_value, Itemset& remaining_value)const;
+	bool pop_by_value(const Data<std::string>* data, Itemset& poped_value, Itemset& remaining_value)const;
    uint32_t get_support()const;
    void set_support(uint32_t _support);
    void clear();
