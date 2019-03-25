@@ -27,7 +27,7 @@ std::list<Itemset>::iterator ItemsetModel::search(uint32_t id){
 	return it;
 }
 
-uint32_t ItemsetModel::get_size()const{
+uint32_t ItemsetModel::size()const{
 	return data_map.size();
 }
 

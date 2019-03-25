@@ -32,5 +32,5 @@ TEST_F(TestFileReader,test_read_itemset_file){
 	ItemsetModel model;
    FileReader fr("./bin/grocery.csv");
    fr.read_itemset_file(",",model);
-	ASSERT_TRUE(model.get_size() == 19);
+	ASSERT_TRUE(model.size() == 19);
 }

@@ -35,7 +35,7 @@ TEST_F(TestItemsetModel,test_simpleInsert){
 	model.insert(d4);
 	model.insert(d5);
 	model.insert(d6);
-	ASSERT_TRUE(model.get_size() == 2);
+	ASSERT_TRUE(model.size() == 2);
 }
 
 TEST_F(TestItemsetModel,test_insertAndSearch){
@@ -46,12 +46,12 @@ TEST_F(TestItemsetModel,test_insertAndSearch){
 	model.insert(d4);
 	model.insert(d5);
 	model.insert(d6);
-	ASSERT_TRUE(model.get_size() == 2);
+	ASSERT_TRUE(model.size() == 2);
 	auto t1 = model.search(0);
 	auto t2 = model.search(1);
 
-	ASSERT_TRUE(t1 != model.end() && t1->get_size() == 3);
-	ASSERT_TRUE(t2 != model.end() && t2->get_size() == 3);
+	ASSERT_TRUE(t1 != model.end() && t1->size() == 3);
+	ASSERT_TRUE(t2 != model.end() && t2->size() == 3);
 }
 
 TEST_F(TestItemsetModel,test_display){

@@ -1,5 +1,10 @@
 #ifndef DATA
 #define DATA
+/*!
+\file Data.hpp
+\brief Declaration of the Data class
+\author Gabriel Cano
+*/
 
 #include <cstdint>
 #include <string>

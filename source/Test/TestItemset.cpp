@@ -26,7 +26,7 @@ TEST_F(TestItemset,test_insert){
 	itemset.insert(&d2);
 	itemset.insert(&d2);
 	itemset.insert(&d3);
-	ASSERT_TRUE( 3 == itemset.get_size());
+	ASSERT_TRUE( 3 == itemset.size());
 }
 
 TEST_F(TestItemset,test_pop_by_value){
@@ -37,30 +37,30 @@ TEST_F(TestItemset,test_pop_by_value){
 	itemset.insert(&d3);
 	itemset.insert(&d4);
 	itemset.insert(&d5);
-	ASSERT_TRUE( 5 == itemset.get_size());
+	ASSERT_TRUE( 5 == itemset.size());
 	Itemset poped_value,remaining_value;
-	ASSERT_TRUE( 0 == poped_value.get_size());
-	ASSERT_TRUE( 0 == remaining_value.get_size());
+	ASSERT_TRUE( 0 == poped_value.size());
+	ASSERT_TRUE( 0 == remaining_value.size());
 	itemset.pop_by_value(&d1,poped_value,remaining_value);
 
-	ASSERT_TRUE( 5 == itemset.get_size() );
-	ASSERT_TRUE( 1 == poped_value.get_size() );
-	ASSERT_TRUE( 4 == remaining_value.get_size() );
+	ASSERT_TRUE( 5 == itemset.size() );
+	ASSERT_TRUE( 1 == poped_value.size() );
+	ASSERT_TRUE( 4 == remaining_value.size() );
 
 	remaining_value.clear();
 	itemset.pop_by_value(&d6,poped_value,remaining_value);
 
-	ASSERT_TRUE( 5 == itemset.get_size() );
-	ASSERT_TRUE( 2 == poped_value.get_size() );
-	ASSERT_TRUE( 4 == remaining_value.get_size() );
+	ASSERT_TRUE( 5 == itemset.size() );
+	ASSERT_TRUE( 2 == poped_value.size() );
+	ASSERT_TRUE( 4 == remaining_value.size() );
 }
 
 TEST_F(TestItemset,test_clear){
 	Itemset itemset;
 	itemset.insert(&d1);
-	ASSERT_TRUE( 1 == itemset.get_size());
+	ASSERT_TRUE( 1 == itemset.size());
 	itemset.clear();
-	ASSERT_TRUE( 0 == itemset.get_size());
+	ASSERT_TRUE( 0 == itemset.size());
 }
 
 TEST_F(TestItemset,test_merge){
@@ -70,10 +70,10 @@ TEST_F(TestItemset,test_merge){
 	k.insert(&d1);	k.insert(&d3);	k.insert(&d4);
 	l.insert(&d1);
 	ASSERT_TRUE(Itemset::merge(i,j,res));
-	ASSERT_TRUE( 4 == res.get_size() );
+	ASSERT_TRUE( 4 == res.size() );
 	res.clear();
 	ASSERT_FALSE( Itemset::merge(i,k,res) );
-	ASSERT_TRUE( 0 == res.get_size() );
+	ASSERT_TRUE( 0 == res.size() );
 	ASSERT_FALSE( Itemset::merge(i,l,res) );
 }
 

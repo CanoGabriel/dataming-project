@@ -34,14 +34,14 @@ const std::list<Data<std::string>* >& Itemset::get_values(void)const{
 	return values;
 }
 
-uint32_t Itemset::get_size()const{
+uint32_t Itemset::size()const{
 	return values.size();
 }
 std::ostream &operator<<(std::ostream &os, Itemset const &itemset){
 	uint32_t n = 0;
 	os << "{ ";
-	for(std::list<Data<std::string>* >::const_iterator it = itemset.values.begin() ; it != itemset.values.end(); it++,n++){
-		if( n == itemset.get_size()-1 ){
+	for(Itemset::const_iterator it = itemset.values.begin() ; it != itemset.values.end(); it++,n++){
+		if( n == itemset.size()-1 ){
 			os << (*it)->get_value() << " ";
 		}
 		else{
@@ -77,7 +77,7 @@ bool Itemset::merge(const Itemset& i, const Itemset& j, Itemset& res){
 	//Check if the k-1 first element are the same, if yes merge else return false
 	//std::cout << "Merge : " << i << " " << j << " = "  << std::endl;
 	res.clear();
-	if( i.get_size() != j.get_size() ) return false;
+	if( i.size() != j.size() ) return false;
 	uint32_t n = 0;
 	const std::list<Data<std::string>*>& i_values = i.get_values();
 	const std::list<Data<std::string>*>& j_values = j.get_values();
@@ -85,7 +85,7 @@ bool Itemset::merge(const Itemset& i, const Itemset& j, Itemset& res){
 	std::list<Data<std::string>*>::const_iterator jt = j_values.begin();
 	bool check = true;
 	for(;it != i_values.end() && jt != j_values.end();it++,jt++,n++){
-		if(n < i.get_size() - 1){
+		if(n < i.size() - 1){
 			check &= Data<std::string>::compare(**it,**jt) == 0;
 		}
 		else{
@@ -125,7 +125,7 @@ bool Itemset::in(Itemset& other)const{
 }
 
 bool operator==(const Itemset& lhs, const Itemset& rhs){
-	if(lhs.get_size() == rhs.get_size()){
+	if(lhs.size() == rhs.size()){
 		std::list<Data<std::string>*>::const_iterator l = lhs.begin();
 		std::list<Data<std::string>*>::const_iterator r = rhs.begin();
 		bool check = true;
@@ -139,7 +139,7 @@ bool operator==(const Itemset& lhs, const Itemset& rhs){
 }
 
 bool operator<(const Itemset& lhs, const Itemset& rhs){
-	if(lhs.get_size() < rhs.get_size()){
+	if(lhs.size() < rhs.size()){
 		return true;
 	}
 	std::list<Data<std::string>*>::const_iterator l = lhs.begin();
@@ -155,7 +155,7 @@ bool operator<(const Itemset& lhs, const Itemset& rhs){
 
 void Itemset::extract_rules(const Itemset& itemset, std::vector<Rule>& res){
 	res.clear();
-	if(itemset.get_size() < 2) return;
+	if(itemset.size() < 2) return;
 	std::set<Itemset,Itemset::CompareItemset> itemsets;
 
 }
@@ -174,7 +174,7 @@ bool Itemset::pop_by_value(const Data<std::string>* data, Itemset& poped_value, 
 	return value_found;
 }
 
-std::list<Data<std::string>* >::iterator Itemset::begin(){return values.begin();}
-std::list<Data<std::string>* >::iterator Itemset::end(){return values.end();}
-std::list<Data<std::string>* >::const_iterator Itemset::begin()const{return values.begin();}
-std::list<Data<std::string>* >::const_iterator Itemset::end()const{return values.end();}
+Itemset::iterator Itemset::begin(){return values.begin();}
+Itemset::iterator Itemset::end(){return values.end();}
+Itemset::const_iterator Itemset::begin()const{return values.begin();}
+Itemset::const_iterator Itemset::end()const{return values.end();}

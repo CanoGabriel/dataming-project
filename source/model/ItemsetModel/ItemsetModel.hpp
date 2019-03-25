@@ -25,7 +25,7 @@ public:
    std::list<Itemset>::iterator search(uint32_t id);
    std::list<Itemset>::iterator end();
    std::list<Itemset>::const_iterator end()const;
-   uint32_t get_size()const;
+   uint32_t size()const;
    uint32_t get_minsup()const;
    void set_minsup(uint32_t _minsup);
 	void clear();
