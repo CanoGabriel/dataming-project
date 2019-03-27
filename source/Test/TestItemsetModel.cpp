@@ -62,23 +62,10 @@ TEST_F(TestItemsetModel,test_display){
 	model.insert(d4);
 	model.insert(d5);
 	model.insert(d6);
-	model.set_minsup(1);
-	model.apriori();
 	std::cout << model << std::endl;
 }
 
-TEST_F(TestItemsetModel,test_apriori){
-	ItemsetModel model;
-	FileReader fr("./bin/grocery.csv");
-	fr.read_itemset_file(",",model);
-	model.set_minsup(1);
-	model.apriori();
+/*
+TEST_F(TestItemsetModel,test_get_support){
 }
-
-TEST_F(TestItemsetModel,test_apriori_100_input){
-	ItemsetModel model;
-	FileReader fr("./bin/sample_100.csv");
-	fr.read_itemset_file(",",model);
-	model.set_minsup(1);
-	model.apriori();
-}
+*/

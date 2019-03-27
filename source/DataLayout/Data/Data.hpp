@@ -91,6 +91,10 @@ class Data {
    T value; /*!< value is the field storing the value */
    uint32_t id_tuple; /*!< id_tuple is the id of the tuple owning the current Data instance */
    uint32_t id_column; /*!< id_column is the id of the column/dimension corresponding the current Data instance */
+
+	struct ComparePt{
+		bool operator()( Data<std::string>* lhs, Data<std::string>* rhs);
+	};
 };
 
 template <class T>
@@ -123,6 +127,11 @@ int Data<T>::compare(const Data<T>& d1, const Data<T>& d2){
    return d1.get_value() - d2.get_value();
 }
 
+template<class T>
+bool Data<T>::ComparePt::operator()(Data<std::string>* lhs, Data<std::string>* rhs){
+	return Data<std::string>::compare(*lhs,*rhs) < 0;
+}
+
 /*!
    \brief The spcialization of the function compare(const Data<T>&,const Data<T>&) for the Data instance storing std::string
 	\param d1 is the first data evaluated
@@ -140,6 +149,5 @@ bool Data<T>::operator< (const Data<T>& rhs)const{
 }
 
 //Missing : specialization for Date and nominal data type. (TO DO)
-
 
 #endif

@@ -29,32 +29,6 @@ TEST_F(TestItemset,test_insert){
 	ASSERT_TRUE( 3 == itemset.size());
 }
 
-TEST_F(TestItemset,test_pop_by_value){
-	Data<std::string> d6(0,0,"item 3");
-	Itemset itemset;
-	itemset.insert(&d1);
-	itemset.insert(&d2);
-	itemset.insert(&d3);
-	itemset.insert(&d4);
-	itemset.insert(&d5);
-	ASSERT_TRUE( 5 == itemset.size());
-	Itemset poped_value,remaining_value;
-	ASSERT_TRUE( 0 == poped_value.size());
-	ASSERT_TRUE( 0 == remaining_value.size());
-	itemset.pop_by_value(&d1,poped_value,remaining_value);
-
-	ASSERT_TRUE( 5 == itemset.size() );
-	ASSERT_TRUE( 1 == poped_value.size() );
-	ASSERT_TRUE( 4 == remaining_value.size() );
-
-	remaining_value.clear();
-	itemset.pop_by_value(&d6,poped_value,remaining_value);
-
-	ASSERT_TRUE( 5 == itemset.size() );
-	ASSERT_TRUE( 2 == poped_value.size() );
-	ASSERT_TRUE( 4 == remaining_value.size() );
-}
-
 TEST_F(TestItemset,test_clear){
 	Itemset itemset;
 	itemset.insert(&d1);
@@ -88,5 +62,8 @@ TEST_F(TestItemset,test_in){
 	ASSERT_FALSE(i.in(j));
 	ASSERT_TRUE(j.in(i));
 	ASSERT_TRUE(l.in(k));
-
 }
+/*
+TEST_F(TestItemset,test_addition){
+}
+*/

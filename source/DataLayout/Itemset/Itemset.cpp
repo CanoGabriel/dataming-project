@@ -59,11 +59,7 @@ void Itemset::set_support(uint32_t _support){
 	support = _support;
 }
 
-bool Itemset::CompareDataPt::operator()(Data<std::string>* lhs, Data<std::string>* rhs){
-	return Data<std::string>::compare(*lhs,*rhs) < 0;
-}
-
-bool Itemset::CompareItemset::operator()(const Itemset& lhs, const Itemset& rhs){
+bool Itemset::Compare::operator()(const Itemset& lhs, const Itemset& rhs){
 	return lhs < rhs;
 }
 /*
@@ -71,6 +67,7 @@ bool Itemset::CompareItemset::operator()(const Itemset& lhs, const Itemset& rhs)
 
 void Itemset::clear(){
 	values.clear();
+	support = 0;
 }
 
 bool Itemset::merge(const Itemset& i, const Itemset& j, Itemset& res){
@@ -101,19 +98,13 @@ bool Itemset::merge(const Itemset& i, const Itemset& j, Itemset& res){
 	return true;
 }
 
-bool Itemset::in(Itemset& other)const{
-	std::list<Data<std::string>*>& other_values = other.get_values();
-	auto it_other = other_values.begin();
-	//std::cout << "Itemset::in\n";
-	bool result = true;
+bool Itemset::in(const Itemset& other)const{
+	const std::list<Data<std::string>*>& other_values = other.get_values();
 	int comp;
 	auto jt = other_values.begin();
 	for(auto it = values.begin() ; it != values.end() ; it++){
 		for( ; jt != other_values.end() ; jt++){
-			//std::cout << (*it)->get_value() << " == ";
 			comp = Data<std::string>::compare(**it,**jt);
-			//std::cout << (*jt)->get_value() << " : ";
-			//std::cout << comp << std::endl;
 			if(comp < 0) return false;
 			else if(comp == 0) {
 				break;
@@ -153,25 +144,24 @@ bool operator<(const Itemset& lhs, const Itemset& rhs){
 	return false;
 }
 
+Itemset operator+(const Itemset& lhs, const Itemset& rhs){
+	Itemset itemset;
+	for(Itemset::const_iterator it = lhs.begin() ; it != lhs.end() ; it++) itemset.insert(*it);
+	for(Itemset::const_iterator it = rhs.begin() ; it != rhs.end() ; it++) itemset.insert(*it);
+	return itemset;
+}
+
+void get_support(Itemset& itemset)const{
+	uint32_t count = 0;
+	for(std::list<Itemset>::const_iterator it = data_map.begin() ; it != data_map.end() ; it++) if(itemset.in(*it)) count++;
+	itemset.set_support(count);
+}
+
 void Itemset::extract_rules(const Itemset& itemset, std::vector<Rule>& res){
 	res.clear();
 	if(itemset.size() < 2) return;
-	std::set<Itemset,Itemset::CompareItemset> itemsets;
+	std::set<Itemset,Itemset::Compare> itemsets;
 
-}
-
-bool Itemset::pop_by_value(const Data<std::string>* data, Itemset& poped_value, Itemset& remaining_value)const{
-	bool value_found = false;
-	for(std::list<Data<std::string>* >::const_iterator it = values.begin() ; it != values.end() ; it++){
-		if(Data<std::string>::compare(*data,**it) == 0){
-			poped_value.insert(*it);
-			value_found = true;
-		}
-		else{
-			remaining_value.insert(*it);
-		}
-	}
-	return value_found;
 }
 
 Itemset::iterator Itemset::begin(){return values.begin();}

@@ -4,6 +4,7 @@
 
 class Itemset;
 class AssociationRule {
+public:
 	const Itemset& cause;
 	const Itemset& consequence;
 	long double lift;
